@@ -76,7 +76,7 @@ async function routerPush(id) {
                   <a v-for="product in products" :key="product.id" :href="`/chi-tiet-san-pham/${product.id}`"
                     class="col-md-6 col-lg-4 col-xl-3">
                     <div class="rounded position-relative fruite-item">
-                      <div class="fruite-img">
+                      <div style="max-height: 205px; min-height: 205px;" class="fruite-img">
                         <img :src="product.hinhAnh" class="img-fluid w-100 rounded-top" alt="" />
                       </div>
                       <div class="p-4 border border-secondary border-top-0 rounded-bottom">
