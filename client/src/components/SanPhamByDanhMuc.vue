@@ -121,7 +121,7 @@ let sortedProducts = computed(() => {
                                             <div class="d-flex flex-column text-uppercase">
                                                 <h3 v-for="word in tenDanhMuc2" class="text-secondary fw-bold fs-1">{{
                                                     word
-                                                    }}</h3>
+                                                }}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +134,8 @@ let sortedProducts = computed(() => {
                                     v-for="product in sortedProducts" :href="`/chi-tiet-san-pham/${product.id}`">
                                     <div class="rounded position-relative fruite-item">
                                         <div style="max-height: 204px; min-height: 204px;" class="fruite-img">
-                                            <img :src="product.hinhAnh" class="img-fluid w-100 rounded-top" alt="">
+                                            <img style="aspect-ratio: 3/2;" :src="product.hinhAnh"
+                                                class="img-fluid w-100 rounded-top" alt="">
                                         </div>
                                         <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                             <h4>{{ product.tenSanPham }}</h4>

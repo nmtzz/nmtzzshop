@@ -5,14 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.aws.S3Service;
+import springboot.gcloud.GoogleCloudStorage;
 import springboot.entity.DanhMuc;
 import springboot.entity.SanPham;
 import springboot.entity.dto.SanPhamDto;
 import springboot.mapper.SanPhamMapper;
 import springboot.repository.SanPhamRepo;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class QuanLySanPham {
     private SanPhamMapper sanPhamMapper;
 
     @Autowired
-    private S3Service s3Service;
+    private GoogleCloudStorage googleCloudStorage;
 
     @RequestMapping("/")
     public List<SanPhamDto> getAllSp() {
@@ -43,7 +42,7 @@ public class QuanLySanPham {
         id.ifPresent(sanPham::setId);
         if (file.isPresent()) {
             System.out.println(file);
-            String url = s3Service.uploadAndGetUrl(file.get());
+            String url = googleCloudStorage.uploadAndGetUrl(file.get());
             sanPham.setHinhAnh(url);
         } else {
             System.out.println("No file");

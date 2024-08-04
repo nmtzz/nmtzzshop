@@ -62,7 +62,8 @@
 
         <Dialog v-model:visible="productDialog" :style="{ width: '800px' }" header="Thêm Sản Phẩm Mới" :modal="true">
             <div class="d-flex flex-column gap-3">
-                <img v-if="product.hinhAnh" :src="product.hinhAnh" alt="Image" class="d-block mx-auto pb-3" />
+                <img style="max-width: 80%;" v-if="product.hinhAnh" :src="product.hinhAnh" alt="Image"
+                    class="d-block mx-auto pb-3" />
                 <FileUpload name="demo[]" url="/api/upload" :multiple="false" accept="image/*" :maxFileSize="1000000"
                     @select="onSelectedFile">
                     <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">

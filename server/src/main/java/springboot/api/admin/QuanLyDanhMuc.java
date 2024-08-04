@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.aws.S3Service;
+import springboot.gcloud.GoogleCloudStorage;
 import springboot.entity.DanhMuc;
 import springboot.repository.DanhMucRepo;
 
@@ -20,7 +20,7 @@ public class QuanLyDanhMuc {
     private DanhMucRepo danhMucRepo;
 
     @Autowired
-    private S3Service s3Service;
+    private GoogleCloudStorage googleCloudStorage;
 
     @GetMapping("/")
     public List<DanhMuc> getAllDanhMuc() {
@@ -34,7 +34,7 @@ public class QuanLyDanhMuc {
         danhMuc.setTenDanhMuc(tenDanhMuc);
         danhMuc.setAnhDanhMuc(anhDanhMuc);
         if (file.isPresent() && !file.get().isEmpty()) {
-            String url = s3Service.uploadAndGetUrl(file.get());
+            String url = googleCloudStorage.uploadAndGetUrl(file.get());
             danhMuc.setAnhDanhMuc(url);
         }
         danhMucRepo.save(danhMuc);

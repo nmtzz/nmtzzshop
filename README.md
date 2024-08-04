@@ -34,7 +34,7 @@ Fashion Shop là ứng dụng web thương mại điện tử, nơi người dù
 
 ### Dịch vụ web
 
-- **AWS S3**: Dịch vụ lưu trữ có thể mở rộng để lưu trữ hình ảnh và các đối tượng khác
+- **Google Cloud Storage**: Dịch vụ lưu trữ có thể mở rộng để lưu trữ hình ảnh và các đối tượng khác
 
 ## Bắt đầu
 
@@ -43,6 +43,7 @@ Fashion Shop là ứng dụng web thương mại điện tử, nơi người dù
 - **Node.js và npm**: Tải và cài đặt từ [Node.js website](https://nodejs.org/).
 - **Java Development Kit (JDK)**: Tải và cài đặt từ [Liberica JDK website](https://bell-sw.com/pages/downloads/).
 - **Oracle Database**: Tải và cài đặt từ [Oracle Database website](https://www.oracle.com/database/technologies/oracle-database-software-downloads.html).
+- **Tài Khoản Google Cloud**: Đăng ký [Google Cloud website](https://cloud.google.com/).
 
 ### Cài đặt
 
@@ -74,6 +75,14 @@ cd target
 java -jar server-0.0.1-SNAPSHOT.jar
 ```
 
+5. **Cấu hình Google Cloud:**
+
+- Đảm bảo bạn có tài khoản Google Cloud Platform và đã tạo một Cloud Storage bucket.
+- Tạo một Service Account trong project của bạn và cấp cho nó quyền "Storage Object Admin" để có thể tải file lên GCS.
+- Tải xuống JSON key file của Service Account này.
+- Đặt đường dẫn đến JSON key file này vào một biến môi trường(Environment Variables), ví dụ GOOGLE_APPLICATION_CREDENTIALS
+- Cập nhật class `GoogleCloudStorage` trong Thư mục `server/src/main/java/springboot/gcloud` với tên bucket(bucketName) của bạn
+
 ### Chạy ứng dụng
 
 1. **Khởi động Vite:**
@@ -93,6 +102,7 @@ Mở trình duyệt và truy cập vào URL của Vite, mặc định: `http://l
 - **Duyệt sản phẩm**: Người dùng có thể duyệt và tìm kiếm các mặt hàng.
 - **Giỏ hàng**: Người dùng có thể thêm các mặt hàng vào giỏ hàng của họ và tiến hành thanh toán.
 - **Quản lý đơn hàng**: Người dùng có thể xem lịch sử đơn hàng và theo dõi đơn hàng của họ.
+- **Nhận xét sản phẩm**: Người dùng có thể nhận xét về sản phẩm.
 
 ### Chức năng quản trị
 
