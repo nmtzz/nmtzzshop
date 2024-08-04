@@ -44,6 +44,7 @@ Fashion Shop là ứng dụng web thương mại điện tử, nơi người dù
 - **Java Development Kit (JDK)**: Tải và cài đặt từ [Liberica JDK website](https://bell-sw.com/pages/downloads/).
 - **Oracle Database**: Tải và cài đặt từ [Oracle Database website](https://www.oracle.com/database/technologies/oracle-database-software-downloads.html).
 - **Tài Khoản Google Cloud**: Đăng ký [Google Cloud website](https://cloud.google.com/).
+- **Apache Maven**: Tải và cài đặt từ [Apache Maven website](https://maven.apache.org/download.cgi).
 
 ### Cài đặt
 
@@ -73,11 +74,15 @@ spring.datasource.password=your_db_password
 - Đặt đường dẫn đến JSON key file này vào một biến môi trường(Environment Variables), ví dụ GOOGLE_APPLICATION_CREDENTIALS
 - Cập nhật class `GoogleCloudStorage` trong Thư mục `server/src/main/java/springboot/gcloud` với tên bucket(bucketName) của bạn
 
+4. **Cấu hình Maven:**
+
+- Thêm thư mục `bin` của Maven vào biến môi trường(Environment Variables)
+
 ### Chạy ứng dụng
 
 1. **Khởi chạy Spring Boot:**
 
-Điều hướng đến thư mục `server` và chạy file `1.Start_server.bat` để tự động khởi chạy Spring Boot.
+Điều hướng đến thư mục `server` và chạy file `1.Start_server.bat` để tự động build và khởi chạy Spring Boot.
 
 2. **Khởi chạy Vite:**
 
