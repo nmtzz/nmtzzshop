@@ -1,0 +1,188 @@
+create table DANH_MUC
+(
+    MA_DANH_MUC  NUMBER generated as identity
+        primary key,
+    TEN_DANH_MUC NVARCHAR2(255),
+    ANH_DANH_MUC NVARCHAR2(255)
+)
+/
+
+create table SAN_PHAM
+(
+    MA_SAN_PHAM  NUMBER generated as identity
+        primary key,
+    TEN_SAN_PHAM NVARCHAR2(255),
+    HINH_ANH     NVARCHAR2(255),
+    MA_DANH_MUC  NUMBER
+        references DANH_MUC
+            on delete cascade,
+    MO_TA        NVARCHAR2(255)
+)
+/
+
+create table CHI_TIET_SAN_PHAM
+(
+    MA_CHI_TIET      NUMBER generated as identity
+        primary key,
+    MA_SAN_PHAM      NUMBER
+        references SAN_PHAM
+            on delete cascade,
+    KICH_THUOC       NVARCHAR2(255),
+    MAU_SAC          NVARCHAR2(255),
+    GIA_TIEN         NUMBER,
+    SO_LUONG_TON_KHO NUMBER
+)
+/
+
+create table USERS
+(
+    TEN_NGUOI_DUNG NVARCHAR2(255) not null
+        primary key,
+    EMAIL          NVARCHAR2(255),
+    MAT_KHAU       NVARCHAR2(255),
+    VAI_TRO        NVARCHAR2(255) default 'USER'
+)
+/
+
+create table NHAN_XET_SAN_PHAM
+(
+    MA_NHAN_XET        NUMBER generated as identity
+        primary key,
+    MA_SAN_PHAM        NUMBER
+        references SAN_PHAM
+            on delete cascade,
+    NOI_DUNG_NHAN_XET  NVARCHAR2(255),
+    THOI_GIAN_NHAN_XET DATE,
+    TEN_NGUOI_DUNG     NVARCHAR2(255)
+        constraint NHAN_XET_SAN_PHAM_USERS_TEN_NGUOI_DUNG_FK
+            references USERS
+)
+/
+
+create table GIO_HANG
+(
+    MA_GIO_HANG    NUMBER generated as identity
+        primary key,
+    MA_CHI_TIET    NUMBER
+        references CHI_TIET_SAN_PHAM
+            on delete cascade,
+    SO_LUONG       NUMBER,
+    TEN_NGUOI_DUNG NVARCHAR2(255)
+        constraint GIO_HANG_USERS_TEN_NGUOI_DUNG_FK
+            references USERS
+)
+/
+
+create table HOA_DON
+(
+    MA_HOA_DON        NUMBER generated as identity
+        primary key,
+    NGAY_LAP_HOA_DON  TIMESTAMP(7) WITH TIME ZONE default CURRENT_TIMESTAMP,
+    TONG_TIEN         NUMBER,
+    TEN_NGUOI_NHAN    NVARCHAR2(255),
+    DIA_CHI_GIAO_HANG NVARCHAR2(255),
+    SO_DIEN_THOAI     NVARCHAR2(255),
+    TRANG_THAI        NVARCHAR2(255),
+    TEN_NGUOI_DUNG    NVARCHAR2(255)
+        constraint HOA_DON_USERS_TEN_NGUOI_DUNG_FK
+            references USERS,
+    GHI_CHU           NVARCHAR2(255)              default NULL
+)
+/
+
+create or replace trigger CAP_NHAT_SO_LUONG_TON_KHO_KHI_HUY
+    after update
+    on HOA_DON
+    for each row
+    when (NEW.TRANG_THAI = 'Đã hủy' AND OLD.TRANG_THAI != 'Đã hủy')
+BEGIN
+    UPDATE CHI_TIET_SAN_PHAM
+    SET SO_LUONG_TON_KHO = SO_LUONG_TON_KHO + (SELECT SO_LUONG
+                                               FROM CHI_TIET_HOA_DON
+                                               WHERE CHI_TIET_HOA_DON.MA_HOA_DON = :OLD.MA_HOA_DON
+                                                 AND CHI_TIET_SAN_PHAM.MA_CHI_TIET = CHI_TIET_HOA_DON.MA_CHI_TIET)
+    WHERE MA_CHI_TIET IN (SELECT MA_CHI_TIET FROM CHI_TIET_HOA_DON WHERE CHI_TIET_HOA_DON.MA_HOA_DON = :OLD.MA_HOA_DON);
+END;
+/
+
+create table CHI_TIET_HOA_DON
+(
+    MA_CHI_TIET_HOA_DON NUMBER generated as identity
+        primary key,
+    MA_HOA_DON          NUMBER
+        references HOA_DON
+            on delete cascade,
+    MA_CHI_TIET         NUMBER
+        references CHI_TIET_SAN_PHAM
+            on delete cascade,
+    SO_LUONG            NUMBER
+)
+/
+
+create or replace trigger CAP_NHAT_SO_LUONG_TON_KHO
+    after insert
+    on CHI_TIET_HOA_DON
+    for each row
+BEGIN
+    UPDATE CHI_TIET_SAN_PHAM
+    SET SO_LUONG_TON_KHO = SO_LUONG_TON_KHO - :NEW.SO_LUONG
+    WHERE MA_CHI_TIET = :NEW.MA_CHI_TIET;
+END;
+/
+
+create or replace view DOANH_THU_THANG_HIEN_TAI as
+SELECT SUM(TONG_TIEN) AS DOANH_THU
+FROM HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+  AND EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(MONTH FROM SYSDATE)
+  AND HOA_DON.TRANG_THAI = 'Đã đặt'
+/
+
+create or replace view DOANH_THU_HANG_THANG as
+SELECT EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) AS THANG,
+       SUM(TONG_TIEN)                               AS DOANH_THU
+FROM HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+  AND HOA_DON.TRANG_THAI = 'Đã đặt'
+GROUP BY EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON)
+/
+
+create or replace view DON_HANG_TRONG_NGAY as
+SELECT COUNT(MA_HOA_DON) AS SO_LUONG
+FROM HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+  AND EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(MONTH FROM SYSDATE)
+  AND EXTRACT(DAY FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(DAY FROM SYSDATE)
+/
+
+create or replace view DON_HANG_THEO_THANG as
+SELECT EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) AS THANG,
+       COUNT(MA_HOA_DON)                            AS SO_LUONG
+FROM HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+GROUP BY EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON)
+/
+
+create or replace view SAN_PHAM_BAN_DUOC_TRONG_NGAY as
+SELECT SUM(SO_LUONG) AS SO_LUONG
+FROM CHI_TIET_HOA_DON
+         JOIN HOA_DON ON CHI_TIET_HOA_DON.MA_HOA_DON = HOA_DON.MA_HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+  AND EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(MONTH FROM SYSDATE)
+  AND EXTRACT(DAY FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(DAY FROM SYSDATE)
+/
+
+create or replace view SAN_PHAM_BAN_DUOC_THEO_THANG as
+SELECT EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON) AS THANG,
+       SUM(SO_LUONG)                                AS SO_LUONG
+FROM CHI_TIET_HOA_DON
+         JOIN HOA_DON ON CHI_TIET_HOA_DON.MA_HOA_DON = HOA_DON.MA_HOA_DON
+WHERE EXTRACT(YEAR FROM HOA_DON.NGAY_LAP_HOA_DON) = EXTRACT(YEAR FROM SYSDATE)
+GROUP BY EXTRACT(MONTH FROM HOA_DON.NGAY_LAP_HOA_DON)
+/
+
+create or replace view TONG_KHACH_HANG as
+SELECT COUNT(TEN_NGUOI_DUNG) AS SO_LUONG
+FROM USERS
+/
+
