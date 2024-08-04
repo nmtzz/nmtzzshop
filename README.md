@@ -65,17 +65,7 @@ spring.datasource.username=your_db_username
 spring.datasource.password=your_db_password
 ```
 
-3. **Cấu hình Back-end:**
-
-Điều hướng đến thư mục `server` và chạy file `1.Start_server.bat` để tự động khởi chạy Spring Boot. Hoặc chạy thủ công như sau:
-
-```bash
-cd server
-cd target
-java -jar server-0.0.1-SNAPSHOT.jar
-```
-
-5. **Cấu hình Google Cloud:**
+3. **Cấu hình Google Cloud:**
 
 - Đảm bảo bạn có tài khoản Google Cloud Platform và đã tạo một Cloud Storage bucket.
 - Tạo một Service Account trong project của bạn và cấp cho nó quyền "Storage Object Admin" để có thể tải file lên GCS.
@@ -85,11 +75,15 @@ java -jar server-0.0.1-SNAPSHOT.jar
 
 ### Chạy ứng dụng
 
-1. **Khởi động Vite:**
+1. **Khởi chạy Spring Boot:**
+
+Điều hướng đến thư mục `server` và chạy file `1.Start_server.bat` để tự động khởi chạy Spring Boot.
+
+2. **Khởi chạy Vite:**
 
 Điều hướng đến thư mục `client` và chạy file `1.Start_client.bat` để tự động cài đặt dependencies và chạy Vite.
 
-2. **Truy cập trên trình duyệt:**
+3. **Truy cập trên trình duyệt:**
 
 Mở trình duyệt và truy cập vào URL của Vite, mặc định: `http://localhost:5173`
 
