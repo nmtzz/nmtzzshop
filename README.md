@@ -11,7 +11,7 @@ Fashion Shop là ứng dụng web thương mại điện tử, nơi người dù
 - Quản lý giỏ hàng
 - Đặt hàng và quản lý đơn hàng
 - Trang quản trị để quản lý sản phẩm, danh mục và đơn hàng
-- Tải lên và lưu trữ hình ảnh bằng AWS S3
+- Tải lên và lưu trữ hình ảnh bằng Google Cloud Storage
 
 ## Công Nghệ Sử Dụng
 
