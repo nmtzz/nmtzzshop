@@ -7,6 +7,7 @@ Fashion Shop là ứng dụng web thương mại điện tử, nơi người dù
 ## Tính năng
 
 - Xác thực và phân quyền người dùng
+- Quản lý phiên đăng nhập bằng JWT
 - Tìm kiếm sản phẩm theo danh mục
 - Quản lý giỏ hàng
 - Đặt hàng và quản lý đơn hàng
